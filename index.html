@@ -1,11 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="style.css" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-<body>
-    
-</body>
+<script>
+fetch("pokemon.json")
+    .then(res => res.json())
+    .then(pokemon => {
+        document.body.innerHTML = `
+        <h1>${pokemon.name}</h1>
+        <img src="${pokemon.sprite}">
+        <p><strong>Type(s):</strong> ${pokemon.types}</p>
+        <p><strong>Weight:</strong> ${pokemon.weight_kg} kg</p>
+        `;
+    });
+</script>
 </html>
