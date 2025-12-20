@@ -3,4 +3,5 @@
 2. Install Python
 3. Run poke.py
 4. Left click and open index.html with Five Server
+5. Enjoy! New random Pokemon every 5 seconds for maximum dopamine
 Note: If for some reason the background colors aren't changing, make sure the hexidecimal number in old_backgrounds.json match the ones on line 7 of style.css

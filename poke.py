@@ -102,6 +102,6 @@ while True:
     poke_json = open("pokemon.json", "w")
     json.dump(random_pokemon, poke_json)
     random_pokemon = rand_poke()
-    time.sleep(3)
+    time.sleep(5)
     with open(css, 'w') as mycss:
         mycss.write(new_background)
