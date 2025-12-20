@@ -38,7 +38,7 @@ TYPE_COLORS = {
 def rand_poke():
     POKE_COUNT = 1025                              # adjust if new pokemon come out (is this a thing?)
     API_URL    = "https://pokeapi.co/api/v2/pokemon/{}" # we will use {} later for substitution with .format()
-    POKE_ID = random.randint(0,POKE_COUNT)
+    POKE_ID = random.randint(1, POKE_COUNT)
     request = requests.get(API_URL.format(POKE_ID),timeout=10)
     request.raise_for_status()
     data = request.json()
@@ -48,20 +48,25 @@ def rand_poke():
         "types":        [t["type"]["name"] for t in data["types"]], 
         "weight_kg":    data["weight"]/10,
         "sprite":       data["sprites"]["front_default"],
+        "abilities":    [a["ability"]["name"] for a in data.get("abilities", [])],
+        "attacks":      [m["move"]["name"] for m in data.get("moves", [])],
         
     }
     return formatted_data
 
-old_backgrounds = open("pokemon.json", "w")
-json.read(old_backgrounds)
+with open('old_backgrounds.json', 'r') as old_backgrounds_file:
+    old_backgrounds = json.load(old_backgrounds_file)
 
-old_background1 = 'red'
-old_background2 = 'yellow'
-new_background1 = old_background1
-new_background2 = old_background2
-
+#print(old_backgrounds)
+for i, j in enumerate(old_backgrounds):
+    if i == 0:
+        old_background1 = j
+    else:
+        old_background2 = j
+random_pokemon = rand_poke()
 while True:
-    random_pokemon = rand_poke()
+    print(len(random_pokemon["types"]))
+    print(random_pokemon['types'])
     if len(random_pokemon["types"]) == 1:
         new_background1 = TYPE_COLORS[random_pokemon['types'][0]]
         new_background2 = TYPE_COLORS[random_pokemon['types'][0]]
@@ -78,16 +83,25 @@ while True:
     with open(css) as mycss:
         mystring = mycss.read()
     new_background = mystring.replace(f'background-image: linear-gradient(to right, {old_background1}, {old_background2})', f'background-image: linear-gradient(to right, {new_background1}, {new_background2})')
+
+    background_list = []
     old_background1 = new_background1
+    background_list.append(new_background1)
     if len(random_pokemon["types"]) == 2:
         old_background2 = new_background2
+        background_list.append(new_background2)
     else:
         old_background2 = new_background1
-
-    with open(css, 'w') as mycss:
-        mycss.write(new_background)
+        background_list.append(new_background1)
+    with open('old_backgrounds.json', 'w') as old_backgrounds_file:
+        json.dump(background_list, old_backgrounds_file)
 
     random_pokemon['types'] = [" " + i.capitalize() for i in random_pokemon["types"]]
+    random_pokemon['abilities'] = [" " + i.capitalize() for i in random_pokemon.get("abilities")]
+    random_pokemon['attacks'] = [" " + i.capitalize() for i in random_pokemon.get("attacks")]
     poke_json = open("pokemon.json", "w")
     json.dump(random_pokemon, poke_json)
-    time.sleep(2)
+    random_pokemon = rand_poke()
+    time.sleep(3)
+    with open(css, 'w') as mycss:
+        mycss.write(new_background)
